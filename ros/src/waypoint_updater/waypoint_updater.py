@@ -3,7 +3,7 @@
 import rospy
 from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
-
+from tensorflow.transformations import euler_from_quaternion
 import math
 
 '''
@@ -97,7 +97,20 @@ class WaypointUpdater(object):
             if dist > temp_dist:
                 dist = temp_dist
                 nearest_idx = idx
+
+
         return nearest_idx
+
+    def is_behind(self, idx, pose):
+        roll, pitch, yaw = euler_from_quaternion(quaternion)
+        wp_pos = self.base_waypoints[idx].pose.pose.position
+        dx = wp_pos.x - pose.position.x
+        dy = wp_pos.y - pose.position.y
+        
+        dx_car = dx * cos(raw) + dy * sin(yaw)
+        if dx_car > 0:
+            return False
+        return True 
 
 
 if __name__ == '__main__':
