@@ -21,7 +21,7 @@ as well as to verify your TL classifier.
 TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
-LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
+LOOKAHEAD_WPS = 20 # Number of waypoints we will publish. You can change this number
 
 
 class WaypointUpdater(object):
@@ -43,18 +43,21 @@ class WaypointUpdater(object):
     def pose_cb(self, msg):
         # TODO: Implement
         pose = msg.pose
+        frame_id = msg.header.frame_id
         if self.base_waypoints != None:
             # find closet waypoint ahead
+            nearest_idx = self.find_closest_waypoint_idx(pose)
+            target_speed = 4.4
+            next_waypoints = self.waypoints[nearest_idx:nearest_idx+LOOKAHEAD_WPS]
             
-            rospy.logwarn(nearest_idx)
+            for waypoint in next_waypoints:
+                waypoint.twist.twist.linear.x = target_speed
+
+            lane = self.create_lane(frame_id, next_waypoints)
+            self.final_waypoints_pub.publish(lane)
 
     def waypoints_cb(self, data):
-        # TODO: Implement
-        #rospy.loginfo(waypoints)
         self.base_waypoints = data.waypoints
-        
-
-
 
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
@@ -82,9 +85,10 @@ class WaypointUpdater(object):
         dl = lambda a, b: math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2  + (a.z-b.z)**2)
         return dl(waypoint.pose.pose.position, pose.position)
 
-    def find_closest_waypoint(self, pose):
+    def find_closest_waypoint_idx(self, pose):
         """
         find the closest waypoint wrt car's current position
+        ======
         Args:
             pose: a pose object
 
@@ -98,6 +102,8 @@ class WaypointUpdater(object):
                 dist = temp_dist
                 nearest_idx = idx
 
+            if self.is_behind(idx, pose):
+                nearest_idx += 1
 
         return nearest_idx
 
@@ -111,6 +117,13 @@ class WaypointUpdater(object):
         if dx_car > 0:
             return False
         return True 
+
+    def create_lane(self, frame_id, waypoints):
+        lane = Lane()
+        lane.header.frame_id  =frame_id
+        lane.waypoints = waypoints
+        lane.header.stamp = rospy.Time.now()
+        return lane
 
 
 if __name__ == '__main__':
