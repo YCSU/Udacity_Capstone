@@ -34,6 +34,7 @@ that we have created in the `__init__` function.
 class DBWNode(object):
     def __init__(self):
         rospy.init_node('dbw_node')
+        self.is_enabled = False
 
         vehicle_mass = rospy.get_param('~vehicle_mass', 1736.35)
         fuel_capacity = rospy.get_param('~fuel_capacity', 13.5)
@@ -87,7 +88,7 @@ class DBWNode(object):
             # if <dbw is enabled>:
             #   self.publish(throttle, brake, steer)
             #if self.is_enabled:
-            #rospy.loginfo("1.0")
+            #rospy.logwarn(self.is_enabled)
             self.publish(1.0, 0.01, 0.1)
             rate.sleep()
 

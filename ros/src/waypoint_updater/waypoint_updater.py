@@ -37,7 +37,7 @@ class WaypointUpdater(object):
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
         # TODO: Add other member variables you need below
-        self.base_waypoints = None
+        self.base_waypoints = None  
         rospy.spin()
 
     def pose_cb(self, msg):
@@ -47,6 +47,7 @@ class WaypointUpdater(object):
         if self.base_waypoints != None:
             # find closet waypoint ahead
             nearest_idx = self.find_closest_waypoint_idx(pose)
+            #rospy.logwarn(nearest_idx)
             target_speed = 4.4
             next_waypoints = self.base_waypoints[nearest_idx:nearest_idx+LOOKAHEAD_WPS]
             
@@ -96,14 +97,16 @@ class WaypointUpdater(object):
             int: index of the closet waypoint
         """
         dist = float('inf') # a very large number
+        nearest_idx = None
+
         for idx,waypoint in enumerate(self.base_waypoints):
             temp_dist = self.distance(waypoint, pose)
             if dist > temp_dist:
                 dist = temp_dist
                 nearest_idx = idx
 
-            if self.is_behind(idx, pose):
-                nearest_idx += 1
+        if self.is_behind(nearest_idx, pose):
+            nearest_idx += 1
 
         return nearest_idx
 
