@@ -3,7 +3,7 @@
 import rospy
 from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
-from tensorflow.transformations import euler_from_quaternion
+from tf.transformations import euler_from_quaternion
 import math
 
 '''
@@ -48,7 +48,7 @@ class WaypointUpdater(object):
             # find closet waypoint ahead
             nearest_idx = self.find_closest_waypoint_idx(pose)
             target_speed = 4.4
-            next_waypoints = self.waypoints[nearest_idx:nearest_idx+LOOKAHEAD_WPS]
+            next_waypoints = self.base_waypoints[nearest_idx:nearest_idx+LOOKAHEAD_WPS]
             
             for waypoint in next_waypoints:
                 waypoint.twist.twist.linear.x = target_speed
@@ -108,12 +108,16 @@ class WaypointUpdater(object):
         return nearest_idx
 
     def is_behind(self, idx, pose):
+        quaternion = [ pose.orientation.x,
+                       pose.orientation.y,
+                       pose.orientation.z,
+                       pose.orientation.w ]
         roll, pitch, yaw = euler_from_quaternion(quaternion)
         wp_pos = self.base_waypoints[idx].pose.pose.position
         dx = wp_pos.x - pose.position.x
         dy = wp_pos.y - pose.position.y
         
-        dx_car = dx * cos(raw) + dy * sin(yaw)
+        dx_car = dx * math.cos(yaw) + dy * math.sin(yaw)
         if dx_car > 0:
             return False
         return True 
