@@ -13,7 +13,7 @@ import cv2
 from traffic_light_config import config
 
 STATE_COUNT_THRESHOLD = 3
-LIGHTGAP = 4 # number of waypoints between the traffic light and the stop line
+LIGHTGAP = 5 # number of waypoints between the traffic light and the stop line
 LOOKAHEAD_WPS = 50 # set it as the one in wapoint_updater.py
 
 
@@ -152,7 +152,7 @@ class TLDetector(object):
         #TODO use light location to zoom in on traffic light in image
 
         #Get classification
-        return self.light_classifier.get_classification(cv_image)
+        return False#self.light_classifier.get_classification(cv_image)
 
     def process_traffic_lights(self):
         """Finds closest visible traffic light, if one exists, and determines its
@@ -176,16 +176,21 @@ class TLDetector(object):
         light_positions = config.light_positions
         if self.base_waypoints != None and car_wp_idx != None:
             self.tl_waypoint_indices = self.get_traffic_light_wp_index(light_positions)
-            for tl_wp_idx in self.tl_waypoint_indices:
+            for i, tl_wp_idx in enumerate(self.tl_waypoint_indices):
                 idx_diff = tl_wp_idx - car_wp_idx
                 if idx_diff >= 0 and idx_diff <= LOOKAHEAD_WPS:
                     light_wp_idx = tl_wp_idx - LIGHTGAP
                     rospy.logwarn(light_wp_idx)
                     #rospy.logwarn(car_wp_idx)
                     rospy.logwarn(self.tl_waypoint_indices)
+                    light = TrafficLight()
+                    light.pose.pose.position.x = light_positions[i][0]
+                    light.pose.pose.position.y = light_positions[i][1]
 
         if light:
-            state = self.get_light_state(light)
+            rospy.logwarn([light.pose.pose.position.x, light.pose.pose.position.y])
+            state = 0
+            #state = self.get_light_state(light)
             return light_wp_idx, state
         self.pose = None
         self.base_waypoints = None
