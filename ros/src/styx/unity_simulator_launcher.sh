@@ -2,7 +2,12 @@
 #
 # Script to launch the CarND Unity simulator
 
+<<<<<<< HEAD
 USER_PROFILE="profile.tmp"
+=======
+THIS_DIR="$(cd "$(dirname "$0")" && pwd -P && cd - > /dev/null)"
+USER_PROFILE="$THIS_DIR/profile.tmp"
+>>>>>>> upsrteam/master
 
 if [ ! -f "$USER_PROFILE" ];
   then

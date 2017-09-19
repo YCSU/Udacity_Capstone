@@ -34,7 +34,10 @@ that we have created in the `__init__` function.
 class DBWNode(object):
     def __init__(self):
         rospy.init_node('dbw_node')
+<<<<<<< HEAD
         self.is_enabled = False
+=======
+>>>>>>> upsrteam/master
 
         vehicle_mass = rospy.get_param('~vehicle_mass', 1736.35)
         fuel_capacity = rospy.get_param('~fuel_capacity', 13.5)
@@ -58,6 +61,7 @@ class DBWNode(object):
         # self.controller = TwistController(<Arguments you wish to provide>)
 
         # TODO: Subscribe to all the topics you need to
+<<<<<<< HEAD
         rospy.Subscriber('/current_velocity', TwistStamped, self.velocity)
         rospy.Subscriber('/vehicle/dbw_enabled', Bool, self.dbw_enabled)
         rospy.Subscriber('/twist_cmd', TwistStamped, self.twist_cmd)
@@ -77,6 +81,13 @@ class DBWNode(object):
 
     def loop(self):
         rate = rospy.Rate(30) # 50Hz
+=======
+
+        self.loop()
+
+    def loop(self):
+        rate = rospy.Rate(50) # 50Hz
+>>>>>>> upsrteam/master
         while not rospy.is_shutdown():
             # TODO: Get predicted throttle, brake, and steering using `twist_controller`
             # You should only publish the control commands if dbw is enabled
@@ -87,9 +98,12 @@ class DBWNode(object):
             #                                                     <any other argument you need>)
             # if <dbw is enabled>:
             #   self.publish(throttle, brake, steer)
+<<<<<<< HEAD
             #if self.is_enabled:
             #rospy.logwarn(self.is_enabled)
             self.publish(1.0, 0.01, 0.1)
+=======
+>>>>>>> upsrteam/master
             rate.sleep()
 
     def publish(self, throttle, brake, steer):

@@ -8,6 +8,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from light_classification.tl_classifier import TLClassifier
 import tf
+<<<<<<< HEAD
 from tf.transformations import euler_from_quaternion
 import cv2
 import yaml
@@ -17,13 +18,23 @@ import numpy as np
 STATE_COUNT_THRESHOLD = 3
 LIGHTGAP = 5 # number of waypoints between the traffic light and the stop line
 LOOKAHEAD_WPS = 70 # number of wp as tl in sight
+=======
+import cv2
+import yaml
+
+STATE_COUNT_THRESHOLD = 3
+>>>>>>> upsrteam/master
 
 class TLDetector(object):
     def __init__(self):
         rospy.init_node('tl_detector')
 
         self.pose = None
+<<<<<<< HEAD
         self.base_waypoints = None
+=======
+        self.waypoints = None
+>>>>>>> upsrteam/master
         self.camera_image = None
         self.lights = []
 
@@ -57,10 +68,17 @@ class TLDetector(object):
         rospy.spin()
 
     def pose_cb(self, msg):
+<<<<<<< HEAD
         self.pose = msg.pose
 
     def waypoints_cb(self, data):
         self.base_waypoints = data.waypoints
+=======
+        self.pose = msg
+
+    def waypoints_cb(self, waypoints):
+        self.waypoints = waypoints
+>>>>>>> upsrteam/master
 
     def traffic_cb(self, msg):
         self.lights = msg.lights
@@ -105,6 +123,7 @@ class TLDetector(object):
             int: index of the closest waypoint in self.waypoints
 
         """
+<<<<<<< HEAD
         dist = float('inf') # a very large number
         nearest_idx = None
         for idx,waypoint in enumerate(self.base_waypoints):
@@ -118,6 +137,11 @@ class TLDetector(object):
     def distance(self, waypoint, pose):
         dl = lambda a, b: math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2)
         return dl(waypoint.pose.pose.position, pose.position)
+=======
+        #TODO implement
+        return 0
+
+>>>>>>> upsrteam/master
 
     def project_to_image_plane(self, point_in_world):
         """Project point from 3D world coordinates to 2D camera image location
@@ -187,6 +211,7 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
+<<<<<<< HEAD
         light = None # TrafficLight object
         light_positions = self.config['light_positions']
         # find the waypoint index that is closest to the car
@@ -227,6 +252,21 @@ class TLDetector(object):
             indices.append(self.get_closest_waypoint(pose))
         return indices
 
+=======
+        light = None
+        light_positions = self.config['light_positions']
+        if(self.pose):
+            car_position = self.get_closest_waypoint(self.pose.pose)
+
+        #TODO find the closest visible traffic light (if one exists)
+
+        if light:
+            state = self.get_light_state(light)
+            return light_wp, state
+        self.waypoints = None
+        return -1, TrafficLight.UNKNOWN
+
+>>>>>>> upsrteam/master
 if __name__ == '__main__':
     try:
         TLDetector()

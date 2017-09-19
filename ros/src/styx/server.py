@@ -11,7 +11,10 @@ from conf import conf
 
 sio = socketio.Server()
 app = Flask(__name__)
+<<<<<<< HEAD
 #bridge = Bridge(conf)
+=======
+>>>>>>> upsrteam/master
 msgs = []
 
 dbw_enable = False
@@ -25,7 +28,10 @@ def send(topic, data):
     msgs.append((topic, data))
     #sio.emit(topic, data=json.dumps(data), skip_sid=True)
 
+<<<<<<< HEAD
 #bridge.register_server(send)
+=======
+>>>>>>> upsrteam/master
 bridge = Bridge(conf, send)
 
 @sio.on('telemetry')
