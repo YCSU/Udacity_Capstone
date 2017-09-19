@@ -3,11 +3,7 @@
 import rospy
 from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
-<<<<<<< HEAD
-from tf.transformations import euler_from_quaternion
-=======
 
->>>>>>> upsrteam/master
 import math
 
 '''
@@ -25,11 +21,7 @@ as well as to verify your TL classifier.
 TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
-<<<<<<< HEAD
-LOOKAHEAD_WPS = 20 # Number of waypoints we will publish. You can change this number
-=======
 LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
->>>>>>> upsrteam/master
 
 
 class WaypointUpdater(object):
@@ -45,40 +37,16 @@ class WaypointUpdater(object):
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
         # TODO: Add other member variables you need below
-<<<<<<< HEAD
-        self.base_waypoints = None  
-=======
 
->>>>>>> upsrteam/master
         rospy.spin()
 
     def pose_cb(self, msg):
         # TODO: Implement
-<<<<<<< HEAD
-        pose = msg.pose
-        frame_id = msg.header.frame_id
-        if self.base_waypoints != None:
-            # find closet waypoint ahead
-            nearest_idx = self.find_closest_waypoint_idx(pose)
-            #rospy.logwarn(nearest_idx)
-            target_speed = 4.4
-            next_waypoints = self.base_waypoints[nearest_idx:nearest_idx+LOOKAHEAD_WPS]
-            
-            for waypoint in next_waypoints:
-                waypoint.twist.twist.linear.x = target_speed
-
-            lane = self.create_lane(frame_id, next_waypoints)
-            self.final_waypoints_pub.publish(lane)
-
-    def waypoints_cb(self, data):
-        self.base_waypoints = data.waypoints
-=======
         pass
 
     def waypoints_cb(self, waypoints):
         # TODO: Implement
         pass
->>>>>>> upsrteam/master
 
     def traffic_cb(self, msg):
         # TODO: Callback for /traffic_waypoint message. Implement
@@ -94,11 +62,7 @@ class WaypointUpdater(object):
     def set_waypoint_velocity(self, waypoints, waypoint, velocity):
         waypoints[waypoint].twist.twist.linear.x = velocity
 
-<<<<<<< HEAD
-    def cum_distance(self, waypoints, wp1, wp2):
-=======
     def distance(self, waypoints, wp1, wp2):
->>>>>>> upsrteam/master
         dist = 0
         dl = lambda a, b: math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2  + (a.z-b.z)**2)
         for i in range(wp1, wp2+1):
@@ -106,59 +70,6 @@ class WaypointUpdater(object):
             wp1 = i
         return dist
 
-<<<<<<< HEAD
-    def distance(self, waypoint, pose):
-        dl = lambda a, b: math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2  + (a.z-b.z)**2)
-        return dl(waypoint.pose.pose.position, pose.position)
-
-    def find_closest_waypoint_idx(self, pose):
-        """
-        find the closest waypoint wrt car's current position
-        ======
-        Args:
-            pose: a pose object
-
-        Returns:
-            int: index of the closet waypoint
-        """
-        dist = float('inf') # a very large number
-        nearest_idx = None
-
-        for idx,waypoint in enumerate(self.base_waypoints):
-            temp_dist = self.distance(waypoint, pose)
-            if dist > temp_dist:
-                dist = temp_dist
-                nearest_idx = idx
-
-        if self.is_behind(nearest_idx, pose):
-            nearest_idx += 1
-
-        return nearest_idx
-
-    def is_behind(self, idx, pose):
-        quaternion = [ pose.orientation.x,
-                       pose.orientation.y,
-                       pose.orientation.z,
-                       pose.orientation.w ]
-        roll, pitch, yaw = euler_from_quaternion(quaternion)
-        wp_pos = self.base_waypoints[idx].pose.pose.position
-        dx = wp_pos.x - pose.position.x
-        dy = wp_pos.y - pose.position.y
-        
-        dx_car = dx * math.cos(yaw) + dy * math.sin(yaw)
-        if dx_car > 0:
-            return False
-        return True 
-
-    def create_lane(self, frame_id, waypoints):
-        lane = Lane()
-        lane.header.frame_id  =frame_id
-        lane.waypoints = waypoints
-        lane.header.stamp = rospy.Time.now()
-        return lane
-
-=======
->>>>>>> upsrteam/master
 
 if __name__ == '__main__':
     try:
